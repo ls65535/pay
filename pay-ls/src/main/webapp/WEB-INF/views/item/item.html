@@ -1,0 +1,217 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="renderer" content="webkit|ie-comp|ie-stand">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+  <meta http-equiv="Cache-Control" content="no-siteapp"/>
+  <link rel="stylesheet"
+        href="../bower_components/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css"
+        href="../static/h-ui/css/H-ui.min.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="../static/h-ui.admin/css/H-ui.admin.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="../lib/Hui-iconfont/1.0.8/iconfont.css"/>
+  <link rel="stylesheet" type="text/css"
+        href="../static/h-ui.admin/skin/default/skin.css" id="skin"/>
+  <link rel="stylesheet" type="text/css"
+        href="../static/h-ui.admin/css/style.css"/>
+  <!-- 引入Bootstrap -->
+
+  <title>商品列表</title>
+</head>
+<style type="text/css">
+  #checkAll1 {
+    text-align: center;
+    font-size: 15px
+  }
+
+  #checkAll2 {
+    text-align: center;
+    font-size: 20px
+  }
+</style>
+<body>
+<span id="mt_item" hidden="true"></span>
+<nav class="breadcrumb">
+  <i class="Hui-iconfont">&#xe67f;</i>慧信科技 <span class="c-gray en">&gt;</span>个人业务<span
+    class="c-gray en">&gt;</span>商品列表 <a class="btn btn-success radius r"
+                                         style="line-height: 1.6em; margin-top: 3px"
+                                         href="javascript:location.replace(location.href);" title="刷新"><i
+    class="Hui-iconfont">&#xe68f;</i></a>
+</nav>
+<div class="page-container">
+  <table class="table table-border table-bordered table-bg">
+    <thead>
+    <tr>
+
+      <th scope="col" colspan="9" id="checkAll2">商品列表</th>
+    </tr>
+    <tr class="text-c">
+
+      <th width="60">编号</th>
+      <th width="100">商品id</th>
+      <th width="300">商品名称</th>
+      <th width="200">商品卖点</th>
+      <th width="80">商品价格(元)</th>
+      <th width="100">库存数量</th>
+      <th width="150">商品条形码</th>
+      <th width="500">商品图片</th>
+      <th width="200">创建时间</th>
+      <th width="200">修改时间</th>
+      <th width="100">购买</th>
+    </tr>
+    </thead>
+    <tbody id="tbody">
+
+    </tbody>
+  </table>
+  <ul class="pagination pagination-sm no-margin pull-right">
+    <li><a id="shouye" class="first">首页</a></li>
+    <li><a id="shangyiye" class="pre">上一页</a></li>
+    <li><a id="xiayiye" class="next">下一页</a></li>
+    <li><a id="weiye" class="last">尾页</a></li>
+    <li><a>总页数(<span id="pageSize">0</span>)</a></li>
+    <li><a>当前页(<span id="pageNum">1</span>)</a></li>
+  </ul>
+  <div id="pageId" class="box-footer clearfix"></div>
+</div>
+<script type="text/javascript">
+
+</script>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript"
+        src="../static/h-ui.admin/js/H-ui.admin.js"></script>
+<!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript"
+        src="../lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript"
+        src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../lib/laypage/1.2/laypage.js"></script>
+<!-- 引入自己的js代码 -->
+<script type="text/javascript">
+  $('.table-sort').dataTable({
+    "aaSorting": [[1, "desc"]],//默认第几个排序
+    "bStateSave": true,//状态保存
+    "pading": false,
+    "aoColumnDefs": [
+      //{"bVisible": false, "aTargets": [ 3 ]} //控制列的隐藏显示
+      {
+        "orderable": false,
+        "aTargets": [0, 8]
+      } // 不参与排序的列
+    ]
+  });
+</script>
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript">
+
+  $(function () {
+    //在此位置实现异步加载的目的是保证两个异步的顺序
+    $(document).ready(function () {
+      doGetObjects();
+    });
+    $(".input-group-btn").on("click", ".btn-search", doQueryObjects);
+
+  });
+
+  function doQueryObjects() {
+    doGetObjects();
+  }
+
+  function doGetObjects() {
+    var reqUrl = "/item/queryAllItem";
+    $.ajax({
+      type: "GET",
+      url: reqUrl,
+      dataType: "json",
+      success: function (result) {//JsonResult
+        doHandleResponseResult(result);
+      }
+    });
+  }
+
+  function doHandleResponseResult(result) {
+    //console.log(result);
+    //alert(JSON.stringify(result));
+    if (result.code == "200") {
+      doSetTableBodyRows(result.data);
+      //更新页面page.html分页数据
+      doSetPagination(result.data);//pageObject类
+    } else {
+      alert(result.msg);
+    }
+  }
+
+  function doSetTableBodyRows(records) {
+
+    $("#tbody").empty();
+    //for(var i=0;i<records.length;i++){}
+    for (var i in records) {
+      var ss = doCreateTds(records[i], i);
+      //2.4将tr追加到tbody中
+      $("#tbody").append(ss);
+    }
+  }
+
+  function doCreateTds(row, i) {
+    i = parseInt(i);
+    var state = "";
+    if (row.appStatus == 1) {
+      state = "流程中";
+    }
+    if (row.appStatus == 2) {
+      state = "审批已通过";
+    }
+    if (row.appStatus == 0) {
+      state = "审批未通过";
+    }
+    var tds = "<tr>" +
+        "<td id='tdeId' style='text-align: center;'>" + (i + 1) + "</td>" +
+        "<td style='text-align: center;'>" + row.id + "</td>" +
+        "<td style='text-align: center;'>" + row.itemName + "</td>" +
+        "<td style='text-align: center;'>" + row.sellPoint + "</td>" +
+        "<td style='text-align: center;'>" + (row.price)/1000 + "</td>" +
+        "<td style='text-align: center;'>" + row.num + "</td>" +
+        "<td style='text-align: center;'>" + row.barcode + "</td>" +
+        "<td style='text-align: center;'>" + row.image + "</td>" +
+        "<td style='text-align: center;'>" + row.createTime + "</td>" +
+        "<td style='text-align: center;'>" + row.modifyTime + "</td>" +
+        "<td style='text-align: center;' class='f-14 td-manage'>" +
+        "<a style='text-decoration:none' class='ml-5' onClick='article_edit("
+        + row.id
+        + ")' href='javascript:;' title='购买'><i class='Hui-iconfont'>&#xe6df;</i></a> ";
+
+    return tds;
+  }
+
+  //购物
+  function article_edit(id) {
+    $("#mt_item").html(id);
+    layer.open({
+      title: '购买',
+      type: 2,
+      area: ['800px', '500px'],
+      content: '/buy',
+    });
+  }
+
+</script>
+<script type="text/javascript"
+        src="../lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../lib/laypage/1.2/laypage.js"></script>
+<script type="text/javascript">
+
+</script>
+
+</body>
+</html>
