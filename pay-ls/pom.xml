@@ -19,9 +19,9 @@
     <mybatis-plus.version>3.1.0</mybatis-plus.version>
     <swagger2.version>2.7.0</swagger2.version>
     <commons-lang3.version>3.7</commons-lang3.version>
-    <google-guava.version>20.0</google-guava.version>
-    <commons-collections.version>3.2</commons-collections.version>
-    <fastjson.version>1.2.60</fastjson.version>
+    <google-guava.version>30.0-jre</google-guava.version>
+    <commons-collections.version>3.2.2</commons-collections.version>
+    <fastjson.version>2.0.9</fastjson.version>
     <spring-web.version>5.1.6.RELEASE</spring-web.version>
     <javax.servlet-api.version>4.0.0</javax.servlet-api.version>
     <github-pagehelper.version>3.7.5</github-pagehelper.version>
@@ -100,11 +100,6 @@
       <scope>provided</scope>
     </dependency>
     <!-- 整合Log4j实现日志追踪 -->
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
-    </dependency>
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
