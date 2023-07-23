@@ -24,7 +24,7 @@
     <fastjson.version>2.0.9</fastjson.version>
     <spring-web.version>5.1.6.RELEASE</spring-web.version>
     <javax.servlet-api.version>4.0.0</javax.servlet-api.version>
-    <github-pagehelper.version>3.7.5</github-pagehelper.version>
+    <github-pagehelper.version>5.3.1</github-pagehelper.version>
     <lombok.version>1.18.12</lombok.version>
     <activiti.version>5.22.0</activiti.version>
     <shiro-spring.version>1.5.0</shiro-spring.version>
